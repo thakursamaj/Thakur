@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Thakur Samaj</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="admin-container" style="margin-top: 100px; max-width: 400px;">
+        <h2 style="text-align: center; color: var(--deep-maroon);">Admin Login</h2>
+        <form id="login-form">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn-primary">Login</button>
+        </form>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD0I-dsd23P1jyqpe6v7xTiVSe7Rqh7cSM",
+            authDomain: "thakur-1c386.firebaseapp.com",
+            projectId: "thakur-1c386",
+            storageBucket: "thakur-1c386.firebasestorage.app",
+            messagingSenderId: "741591175787",
+            appId: "1:741591175787:web:b80a2f7d29b30b6c60d72e"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value)
+                .then(() => window.location.href = "admin.html")
+                .catch((err) => alert("Login Failed: " + err.message));
+        });
+    </script>
+</body>
+</html>

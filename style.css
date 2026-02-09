@@ -1,0 +1,231 @@
+/* --- SANATANI COLOR PALETTE --- */
+:root {
+    --bhagwa-orange: #FF9933;   /* Main Saffron */
+    --deep-maroon: #800000;     /* Traditional Red */
+    --royal-gold: #DAA520;      /* Gold Accents */
+    --parchment: #FFF8E7;       /* Cream Background */
+    --pure-white: #FFFFFF;
+    --text-dark: #2C1810;       /* Dark Brown text */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--parchment);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+/* --- NAVIGATION --- */
+nav {
+    background: var(--deep-maroon);
+    color: var(--pure-white);
+    padding: 1rem 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 4px solid var(--bhagwa-orange);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: var(--bhagwa-orange);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-links a {
+    color: var(--pure-white);
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: var(--bhagwa-orange);
+}
+
+/* --- HERO SECTION --- */
+.hero {
+    background: linear-gradient(rgba(128, 0, 0, 0.85), rgba(128, 0, 0, 0.7)), 
+                url('https://www.transparenttextures.com/patterns/symphony.png'); /* Pattern overlay */
+    padding: 80px 20px;
+    text-align: center;
+    color: var(--pure-white);
+    border-bottom: 5px solid var(--royal-gold);
+}
+
+.hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px #000;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    color: var(--bhagwa-orange);
+    font-weight: bold;
+}
+
+/* --- SECTIONS --- */
+.container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.section-title {
+    text-align: center;
+    color: var(--deep-maroon);
+    font-size: 2rem;
+    margin-bottom: 40px;
+    position: relative;
+    display: inline-block;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.section-title::after {
+    content: '';
+    display: block;
+    width: 60%;
+    height: 4px;
+    background: var(--bhagwa-orange);
+    margin: 10px auto 0;
+    border-radius: 2px;
+}
+
+/* --- EVENT CARDS --- */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.card {
+    background: var(--pure-white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    border-top: 6px solid var(--bhagwa-orange);
+    transition: transform 0.3s ease;
+    position: relative;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-body {
+    padding: 25px;
+}
+
+.date-badge {
+    background-color: var(--deep-maroon);
+    color: var(--pure-white);
+    padding: 6px 12px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+.card h3 {
+    color: var(--text-dark);
+    margin-bottom: 10px;
+    font-size: 1.4rem;
+}
+
+.card p {
+    color: #555;
+    font-size: 0.95rem;
+}
+
+/* --- ADMIN SPECIFIC --- */
+.admin-container {
+    max-width: 800px;
+    margin: 50px auto;
+    background: var(--pure-white);
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    border: 1px solid var(--bhagwa-orange);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--deep-maroon);
+    font-weight: bold;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border 0.3s;
+}
+
+.form-control:focus {
+    border-color: var(--bhagwa-orange);
+    outline: none;
+}
+
+.btn-primary {
+    background-color: var(--bhagwa-orange);
+    color: var(--deep-maroon);
+    border: none;
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: var(--royal-gold);
+}
+
+.btn-delete {
+    background: #ffeded;
+    color: #d32f2f;
+    border: 1px solid #ffcdd2;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+.btn-delete:hover {
+    background: #ffebee;
+}
+
+/* --- ABOUT SECTION --- */
+.about-box {
+    background: var(--pure-white);
+    padding: 40px;
+    border-radius: 12px;
+    border-left: 5px solid var(--deep-maroon);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Thakur Samaj</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --maroon: #800000;
+            --gold: #d4af37;
+            --bg: #f4f7f6;
+            --white: #ffffff;
+        }
+
+        /* Essential: Hide the body by default to prevent "flicker" for non-logged users */
+        body {
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            display: none; 
+        }
+
+        /* Mobile-First Navigation */
+        .top-nav {
+            background: var(--maroon);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        /* Admin Form Card */
+        .card {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+
+        .card h2 { margin: 0 0 20px; font-size: 1.4rem; color: var(--maroon); }
+
+        .form-group { margin-bottom: 15px; }
+
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px; /* Prevents auto-zoom on mobile */
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        .btn-submit {
+            background: var(--maroon);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 700;
+            width: 100%;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        /* Announcements List */
+        .item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border-left: 5px solid var(--gold);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .item h4 { margin: 0; font-size: 1.1rem; }
+        .item p { margin: 0; font-size: 0.9rem; color: #666; line-height: 1.4; }
+        
+        .btn-delete {
+            background: #ffeded;
+            color: #d63031;
+            border: none;
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            align-self: flex-start;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="top-nav">
+        <div style="font-weight: 700;">Admin Panel</div>
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+    </header>
+
+    <main class="container">
+        <div class="card">
+            <h2>Add Update</h2>
+            <form id="postForm">
+                <div class="form-group">
+                    <label>Headline</label>
+                    <input type="text" id="title" placeholder="e.g. Community Meet" required>
+                </div>
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="date" required>
+                </div>
+                <div class="form-group">
+                    <label>Full Description</label>
+                    <textarea id="desc" rows="4" placeholder="Enter all the details..." required></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Post to Website</button>
+            </form>
+        </div>
+
+        <h3 style="padding-left: 5px;">Live Posts</h3>
+        <div id="announcementList">
+            </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, orderBy, query } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD0I-dsd23P1jyqpe6v7xTiVSe7Rqh7cSM",
+            authDomain: "thakur-1c386.firebaseapp.com",
+            projectId: "thakur-1c386",
+            storageBucket: "thakur-1c386.firebasestorage.app",
+            messagingSenderId: "741591175787",
+            appId: "1:741591175787:web:b80a2f7d29b30b6c60d72e"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // --- THE GATEKEEPER SCRIPT ---
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                // Not logged in? Go back to login page
+                window.location.replace("login.html"); 
+            } else {
+                // Logged in? Show the page
+                document.body.style.display = "block";
+                loadPosts();
+            }
+        });
+
+        // --- SUBMIT POST ---
+        document.getElementById('postForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('title').value;
+            const date = document.getElementById('date').value;
+            const desc = document.getElementById('desc').value;
+
+            try {
+                await addDoc(collection(db, "announcements"), {
+                    title, date, desc, createdAt: new Date()
+                });
+                alert("Successfully Posted!");
+                document.getElementById('postForm').reset();
+                loadPosts();
+            } catch (err) {
+                alert("Error: " + err.message);
+            }
+        });
+
+        // --- LOAD POSTS ---
+        async function loadPosts() {
+            const listDiv = document.getElementById('announcementList');
+            const q = query(collection(db, "announcements"), orderBy("date", "desc"));
+            const snap = await getDocs(q);
+            
+            listDiv.innerHTML = '';
+            snap.forEach((docSnap) => {
+                const data = docSnap.data();
+                const div = document.createElement('div');
+                div.className = 'item';
+                div.innerHTML = `
+                    <div style="font-weight:bold; color:var(--gold); font-size:0.8rem;">${data.date}</div>
+                    <h4>${data.title}</h4>
+                    <p>${data.desc}</p>
+                    <button class="btn-delete" data-id="${docSnap.id}">Delete Post</button>
+                `;
+                listDiv.appendChild(div);
+            });
+
+            // Handle Deletes
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.onclick = async () => {
+                    if(confirm("Permanently remove this update?")) {
+                        await deleteDoc(doc(db, "announcements", btn.dataset.id));
+                        loadPosts();
+                    }
+                }
+            });
+        }
+
+        // --- LOGOUT ---
+        document.getElementById('logoutBtn').onclick = () => {
+            signOut(auth).then(() => window.location.replace("login.html"));
+        };
+    </script>
+</body>
+</html>

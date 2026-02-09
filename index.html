@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thakur Samaj | Unity & Heritage</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+        .card { animation: fadeIn 0.8s ease-in-out; border: 1px solid rgba(255, 153, 51, 0.2); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .devotional-bg { background-color: var(--deep-maroon); color: var(--royal-gold); text-align: center; padding: 10px 0; font-family: 'Cinzel', serif; letter-spacing: 5px; font-size: 0.9rem; border-bottom: 2px solid var(--royal-gold); }
+        .stats-section { background: white; padding: 50px 20px; display: flex; justify-content: space-around; flex-wrap: wrap; text-align: center; margin-top: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .stat-item h2 { color: var(--bhagwa-orange); font-size: 2.5rem; margin: 0; }
+        .stat-item p { font-weight: bold; color: var(--deep-maroon); text-transform: uppercase; font-size: 0.8rem; }
+        footer { text-align: center; padding: 40px 20px; background: #fff; border-top: 1px solid #eee; margin-top: 50px; }
+    </style>
+</head>
+<body>
+    <div class="devotional-bg">॥ जय श्री राम ॥</div>
+    <nav>
+        <div class="logo" style="font-family: 'Cinzel', serif;">Thakur Samaj</div>
+        <div class="nav-links">
+
+            <a href="#announcements">Events</a>
+          
+            <a href="login.html" class="admin-link" style=""> Admin</a>
+            
+        </div>
+    </nav>
+
+    <header id="home" class="hero">
+        <div style="max-width: 800px; margin: auto;">
+            <h1 style="font-family: 'Cinzel', serif;">Thakur Samaj Unity</h1>
+            <p>Our Heritage, Our Pride. Building a future rooted in Sanatan values.</p>
+            <a href="#announcements" class="btn-primary" style="display:inline-block; margin-top: 20px; text-decoration: none; width: auto; padding: 12px 40px;">View Updates</a>
+        </div>
+    </header>
+
+    <section class="container">
+        <div class="stats-section">
+            <div class="stat-item"><h2>100+</h2><p>Families Joined</p></div>
+            <div class="stat-item"><h2>50+</h2><p>Events Yearly</p></div>
+            <div class="stat-item"><h2>100%</h2><p>Unity & Support</p></div>
+        </div>
+    </section>
+
+    <section id="announcements" class="container">
+        <h2 class="section-title">Parivaar Announcements</h2>
+        <div id="events-grid" class="grid">
+            <p style="text-align:center; width:100%;">Connecting to community database...</p>
+        </div>
+    </section>
+
+    <section id="about" class="container">
+        <h2 class="section-title">Our Roots & Vision</h2>
+        <div class="grid">
+            <div class="about-box">
+                <h3 style="color: var(--bhagwa-orange); margin-bottom: 15px;">Our Mission</h3>
+                <p>To uplift every member of the Thakur Samaj through education and social support.</p>
+            </div>
+            <div class="about-box">
+                <h3 style="color: var(--bhagwa-orange); margin-bottom: 15px;">Culture & Heritage</h3>
+                <p>We ensure our next generation stays connected to their lineage and Sanatan values.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="logo" style="color: var(--royal-gold); font-family: 'Cinzel'; font-size: 1.5rem; justify-content: center;">Thakur Samaj</div>
+        <p>Jai Shree Ram! Promoting Unity, Service, and Sanatan Dharma.</p>
+        <p style="opacity: 0.6; margin-top: 10px;">&copy; 2026 Thakur Samaj Portal. All Rights Reserved.</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD0I-dsd23P1jyqpe6v7xTiVSe7Rqh7cSM",
+            authDomain: "thakur-1c386.firebaseapp.com",
+            projectId: "thakur-1c386",
+            storageBucket: "thakur-1c386.firebasestorage.app",
+            messagingSenderId: "741591175787",
+            appId: "1:741591175787:web:b80a2f7d29b30b6c60d72e"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function loadEvents() {
+            const grid = document.getElementById('events-grid');
+            try {
+                const q = query(collection(db, "announcements"), orderBy("date", "desc"));
+                const querySnapshot = await getDocs(q);
+                grid.innerHTML = '';
+                if (querySnapshot.empty) {
+                    grid.innerHTML = '<p style="text-align:center; width:100%;">No new announcements.</p>';
+                    return;
+                }
+                querySnapshot.forEach((doc) => {
+                    const event = doc.data();
+                    grid.innerHTML += `
+                        <div class="card"><div class="card-body">
+                            <span class="date-badge">📅 ${event.date}</span>
+                            <h3>${event.title}</h3>
+                            <p>${event.desc}</p>
+                        </div></div>`;
+                });
+            } catch (error) {
+                console.error(error);
+                grid.innerHTML = '<p>Error loading announcements.</p>';
+            }
+        }
+        loadEvents();
+    </script>
+</body>
+</html>
