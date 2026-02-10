@@ -1,0 +1,15 @@
+# Allow search engines to index the public parts of the site
+User-agent: *
+Allow: /index.html
+Allow: /
+
+# Block search engines from indexing the private admin and login areas
+Disallow: /admin.html
+Disallow: /login.html
+
+# Prevent indexing of sensitive firestore or config files if they exist
+Disallow: /config/
+Disallow: /private/
+
+# Hostname
+Host: thakursamaj.in
